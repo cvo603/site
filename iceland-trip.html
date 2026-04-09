@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patchie's Middle School Trip: Iceland Adventure 🇮🇸 — Dada &amp; Patchie · April 2026</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    :root {
+      --navy:  #0a2540;
+      --teal:  #1D9E75;
+      --amber: #EF9F27;
+      --bg:    #eef2f7;
+      --border:#dde5ef;
+      --text:  #1a2840;
+      --muted: #5a6b7c;
+      --st-red:#cc1111;
+      --st-glow: rgba(200,20,20,0.75);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── CHRISTMAS LIGHTS ── */
+    .xmas-lights {
+      background: #060d18;
+      padding: 6px 0 8px;
+      display: flex; justify-content: center; align-items: flex-end;
+      gap: 0; overflow: hidden; position: relative; flex-wrap: nowrap;
+    }
+    .bulb-wrap { display: flex; flex-direction: column; align-items: center; margin: 0 8px; }
+    .bulb-wire { width: 1px; height: 10px; background: #555; }
+    .bulb {
+      width: 10px; height: 14px;
+      border-radius: 50% 50% 45% 45%;
+      position: relative;
+    }
+    .bulb::before { content:''; position:absolute; top:-4px; left:50%; transform:translateX(-50%); width:4px; height:4px; background:#888; border-radius:1px; }
+    .br { background:#ff3322; animation: glow-r 1.1s ease-in-out infinite alternate; }
+    .bb { background:#2255ff; animation: glow-b 1.3s ease-in-out infinite alternate; animation-delay:.18s; }
+    .bg { background:#11cc44; animation: glow-g 0.9s ease-in-out infinite alternate; animation-delay:.36s; }
+    .by { background:#ffee00; animation: glow-y 1.5s ease-in-out infinite alternate; animation-delay:.54s; }
+    .bo { background:#ff8800; animation: glow-o 1.2s ease-in-out infinite alternate; animation-delay:.72s; }
+    @keyframes glow-r { from{opacity:.4;box-shadow:0 0 3px #ff3322} to{opacity:1;box-shadow:0 0 10px #ff3322,0 0 20px rgba(255,50,34,.5)} }
+    @keyframes glow-b { from{opacity:.4;box-shadow:0 0 3px #2255ff} to{opacity:1;box-shadow:0 0 10px #2255ff,0 0 20px rgba(34,85,255,.5)} }
+    @keyframes glow-g { from{opacity:.4;box-shadow:0 0 3px #11cc44} to{opacity:1;box-shadow:0 0 10px #11cc44,0 0 20px rgba(17,204,68,.5)} }
+    @keyframes glow-y { from{opacity:.4;box-shadow:0 0 3px #ffee00} to{opacity:1;box-shadow:0 0 10px #ffee00,0 0 20px rgba(255,238,0,.5)} }
+    @keyframes glow-o { from{opacity:.4;box-shadow:0 0 3px #ff8800} to{opacity:1;box-shadow:0 0 10px #ff8800,0 0 20px rgba(255,136,0,.5)} }
+
+    /* ── ST FLICKER ── */
+    @keyframes flicker {
+      0%,91%,93%,95%,100% { opacity:1; }
+      92% { opacity:.2; }
+      94% { opacity:.8; }
+      96% { opacity:.3; }
+    }
+    .st-flicker { animation: flicker 7s infinite; }
+    .st-glow-text {
+      text-shadow: 0 0 8px var(--st-glow), 0 0 20px rgba(200,20,20,.4);
+      color: #ff4444;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      background: var(--navy);
+      padding: 10px 16px;
+      display: flex; gap: 6px; flex-wrap: wrap;
+      position: sticky; top: 0; z-index: 1000;
+      box-shadow: 0 3px 14px rgba(0,0,0,.38);
+    }
+    .tab-btn {
+      background: rgba(255,255,255,.1);
+      border: 1.5px solid rgba(255,255,255,.18);
+      color: #fff;
+      padding: 7px 15px; border-radius: 99px;
+      cursor: pointer; font-size: 12.5px; font-weight: 600;
+      transition: background .18s, transform .1s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { background: rgba(255,255,255,.22); transform: translateY(-1px); }
+    .tab-btn.active { background: var(--teal); border-color: var(--teal); box-shadow: 0 2px 8px rgba(29,158,117,.45); }
+
+    /* ── PANELS ── */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── LAYOUT ── */
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 20px; }
+    .sec-head { font-size: 1.2rem; font-weight: 800; color: var(--navy); margin-bottom: 20px; display: flex; align-items: center; gap: 9px; }
+    .card { background: #fff; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,.055); overflow: hidden; }
+    .g2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 20px; }
+    .g3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 18px; }
+
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; line-height: 1.6; margin: 2px; }
+    .bt { background:#daf4ea; color:#0d6040; }
+    .ba { background:#fef3d7; color:#9a5e00; }
+    .bn { background:#dde5f4; color:#1a3260; }
+    .br { background:#fde8e8; color:#b30000; }
+    .bst { background:#1a0505; color:#ff5555; border:1px solid #cc1111; }
+    .bpatch { background: linear-gradient(135deg,#1D9E75,#00bb77); color:#fff; }
+
+    /* ══════ HERO ══════ */
+    .hero { background: var(--navy); color: #fff; padding: 52px 20px 42px; text-align: center; position: relative; overflow: hidden; }
+    .aurora { position: absolute; inset: 0; pointer-events: none; }
+    .al { position: absolute; width: 220%; height: 70%; top: 10%; left: -60%; border-radius: 50%; opacity: 0; animation: afl 10s ease-in-out infinite alternate; }
+    .al:nth-child(1) { background: radial-gradient(ellipse at 50% 50%, rgba(0,255,140,.28), rgba(0,200,255,.14), transparent 68%); animation-duration: 9s; }
+    .al:nth-child(2) { background: radial-gradient(ellipse at 62% 38%, rgba(100,0,255,.18), rgba(0,255,130,.18), transparent 64%); animation-duration: 13s; animation-delay: -4s; top: 2%; }
+    .al:nth-child(3) { background: radial-gradient(ellipse at 38% 62%, rgba(0,100,255,.22), rgba(0,255,200,.13), transparent 64%); animation-duration: 11s; animation-delay: -7s; top: 26%; }
+    @keyframes afl { 0%{transform:translateX(-9%) scaleY(.82) rotate(-1.5deg);opacity:.1} 45%{opacity:.48} 100%{transform:translateX(9%) scaleY(1.18) rotate(1.5deg);opacity:.2} }
+
+    .hero-inner { position: relative; z-index: 1; }
+    .hero-flag { font-size: 3.6rem; margin-bottom: 8px; filter: drop-shadow(0 4px 14px rgba(0,0,0,.3)); }
+    .hero h1 { font-size: clamp(1.9rem, 5vw, 3.4rem); font-weight: 900; letter-spacing: -.03em; margin-bottom: 4px; }
+    .hero-sub { font-size: 1rem; opacity: .72; margin-bottom: 6px; }
+    .hero-st { font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; margin-bottom: 26px; }
+
+    .countdown { display: inline-flex; align-items: center; gap: 4px; background: rgba(255,255,255,.1); border: 1.5px solid rgba(255,255,255,.18); border-radius: 18px; padding: 18px 28px; margin-bottom: 22px; }
+    .cdu { text-align: center; min-width: 58px; }
+    .cdn { display: block; font-size: 2.7rem; font-weight: 900; color: var(--amber); line-height: 1; font-variant-numeric: tabular-nums; }
+    .cdl { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; opacity: .6; margin-top: 3px; }
+    .cdc { font-size: 2rem; font-weight: 900; color: var(--teal); align-self: flex-start; margin-top: 4px; }
+
+    .fact-box { background: rgba(255,255,255,.1); border: 1.5px solid rgba(255,255,255,.18); border-radius: 14px; padding: 16px 22px; max-width: 640px; margin: 0 auto 16px; font-size: .9rem; line-height: 1.55; min-height: 58px; display: flex; align-items: center; justify-content: center; transition: opacity .28s; }
+    .fact-btn { background: var(--amber); color: var(--navy); border: none; padding: 10px 24px; border-radius: 99px; cursor: pointer; font-weight: 800; font-size: 13px; transition: transform .14s, box-shadow .14s; }
+    .fact-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(239,159,39,.5); }
+
+    /* ══════ FLIGHTS ══════ */
+    .fl-head { background: var(--navy); color: #fff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .fl-airline { font-size: 11px; opacity: .65; margin-bottom: 2px; }
+    .fl-num { font-weight: 800; font-size: 15px; }
+    .fl-class { font-size: 11px; opacity: .72; background: rgba(255,255,255,.13); padding: 3px 10px; border-radius: 99px; }
+    .fl-route { padding: 20px; display: flex; align-items: center; gap: 10px; }
+    .fl-city { text-align: center; flex: 1; }
+    .fl-code { font-size: 2.1rem; font-weight: 900; color: var(--navy); line-height: 1; }
+    .fl-port { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .fl-time { font-size: 1.1rem; font-weight: 800; color: var(--teal); margin-top: 5px; }
+    .fl-mid { flex: 2; text-align: center; }
+    .fl-dur { font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+    .fl-line { height: 2px; background: linear-gradient(90deg, var(--teal), var(--amber)); border-radius: 2px; position: relative; }
+    .fl-line::after { content:'✈'; position:absolute; right:-4px; top:-11px; font-size:14px; color:var(--amber); }
+    .fl-foot { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--muted); flex-wrap: wrap; gap: 8px; }
+    /* ══════ PACKING LIST ══════ */
+    .pack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 18px; margin-bottom: 28px; }
+    .pack-section { background: #fff; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+    .pack-hd { padding: 14px 18px; font-weight: 800; font-size: 13.5px; }
+    .pack-hd-essential { background: var(--teal); color: #fff; }
+    .pack-hd-fun { background: var(--amber); color: var(--navy); }
+    .pack-hd-swim { background: #3a7abf; color: #fff; }
+    .pack-items { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .pack-item { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 8px; border-radius: 8px; transition: background .14s; user-select: none; }
+    .pack-item:hover { background: #f0f6ff; }
+    .pack-item.checked { opacity: .55; text-decoration: line-through; }
+    .pack-cb { width: 18px; height: 18px; border-radius: 5px; border: 2px solid #b5c5d8; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: all .14s; }
+    .pack-item.checked .pack-cb { background: var(--teal); border-color: var(--teal); color: #fff; }
+    .pack-ico { font-size: 1.3rem; flex-shrink: 0; }
+    .pack-lbl { font-size: 13px; font-weight: 600; flex: 1; }
+    .pack-sub { font-size: 10.5px; color: var(--muted); }
+
+    /* ══════ MONEY ══════ */
+    .rate-banner { background: var(--navy); color: #fff; border-radius: 16px; padding: 20px 24px; margin-bottom: 24px; display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+    .rate-item { text-align: center; flex: 1; min-width: 120px; }
+    .rate-flag { font-size: 1.8rem; margin-bottom: 4px; }
+    .rate-val { font-size: 1.5rem; font-weight: 900; color: var(--amber); line-height: 1; }
+    .rate-lbl { font-size: 11px; opacity: .7; margin-top: 3px; }
+    .rate-divider { width: 1px; background: rgba(255,255,255,.2); align-self: stretch; }
+    .price-table { width: 100%; border-collapse: collapse; border-radius: 14px; overflow: hidden; }
+    .price-table thead th { background: var(--navy); color: #fff; padding: 12px 14px; text-align: left; font-size: 12px; font-weight: 700; }
+    .price-table thead th:not(:first-child) { text-align: center; }
+    .price-table tbody tr:nth-child(even) { background: #f4f8ff; }
+    .price-table tbody tr:nth-child(odd) { background: #fff; }
+    .price-table td { padding: 11px 14px; font-size: 13px; border-bottom: 1px solid var(--border); }
+    .price-table td:not(:first-child) { text-align: center; font-weight: 700; }
+    .price-table .item-ico { font-size: 1.4rem; margin-right: 6px; }
+    .price-table .item-name { font-weight: 700; font-size: 13px; }
+    .price-table .item-note { font-size: 10.5px; color: var(--muted); display: block; }
+    .price-isk { color: #2a7ab8; }
+    .price-cheap { color: #0d6040; }
+    .price-mid { color: #8a5500; }
+    .price-pricey { color: #b30000; }
+    .money-tip { background: linear-gradient(135deg,#e6f5fd,#e4f8f0); border-left: 4px solid var(--teal); border-radius: 0 12px 12px 0; padding: 14px 18px; font-size: 12.5px; line-height: 1.6; margin-top: 20px; }
+
+    /* ══════ HOTEL / JIMNY ══════ */
+    .card-img { width: 100%; height: 200px; object-fit: cover; display: block; }
+    .card-body { padding: 16px 18px; }
+    .card-ttl { font-weight: 800; font-size: 15px; margin-bottom: 5px; }
+    .card-meta { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+    .card-note { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.45; }
+    .jimny { display: flex; overflow: hidden; }
+    .jimny-img { width: 240px; flex-shrink: 0; object-fit: cover; object-position: center; }
+    @media (max-width: 580px) { .jimny { flex-direction: column; } .jimny-img { width: 100%; height: 200px; } }
+
+    /* ══════ ITINERARY ══════ */
+    .itin { display: grid; grid-template-columns: 1fr 290px; gap: 22px; }
+    @media (max-width: 760px) { .itin { grid-template-columns: 1fr; } }
+    .day-col { background: #fff; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+    .day-head { padding: 13px 18px; font-weight: 800; font-size: 13.5px; display: flex; justify-content: space-between; align-items: center; }
+    .dh-fri { background: #eef2f7; color: var(--muted); }
+    .dh-sat { background: var(--teal); color: #fff; }
+    .dh-sun { background: var(--navy); color: #fff; }
+    .day-hint { font-size: 10.5px; opacity: .75; }
+    .dz { min-height: 170px; padding: 10px; display: flex; flex-direction: column; gap: 7px; transition: background .15s; }
+    .dz.over { background: #e5f8f0; border-radius: 8px; }
+    .pool-col { background: #fff; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+    .pool-hd { background: var(--amber); color: var(--navy); padding: 13px 16px; font-weight: 800; font-size: 13px; }
+    .act-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 9px; cursor: grab; display: flex; gap: 9px; transition: box-shadow .15s, opacity .15s; user-select: none; -webkit-user-select: none; }
+    .act-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1); }
+    .act-card.drag { opacity: .35; cursor: grabbing; }
+    .act-thumb { width: 62px; height: 52px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: linear-gradient(135deg,#dde5f4,#c5d3e5); }
+    .act-name { font-weight: 800; font-size: 12.5px; margin-bottom: 3px; }
+    .act-desc { font-size: 11px; color: var(--muted); line-height: 1.35; margin-bottom: 5px; }
+    .locked-it { background: #f4f7fb; border: 1px dashed #c5d0dc; border-radius: 10px; padding: 12px 14px; font-size: 12.5px; }
+    .locked-it strong { display: block; margin-bottom: 3px; }
+    .dz-hint { color: #b5c0cf; font-size: 12px; text-align: center; padding: 16px; pointer-events: none; }
+
+    /* ══════ VOTE ══════ */
+    .vote-card { overflow: hidden; transition: transform .18s, box-shadow .18s; }
+    .vote-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.1); }
+    .vote-img { width: 100%; height: 185px; object-fit: cover; display: block; background: linear-gradient(135deg,#dde5f4,#c5d3e5); }
+    .vote-body { padding: 15px 16px; }
+    .vote-name { font-weight: 800; font-size: 14px; margin-bottom: 5px; }
+    .vote-desc { font-size: 12px; color: var(--muted); line-height: 1.4; margin-bottom: 10px; }
+    .vote-meta { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
+    .vote-btns { display: flex; gap: 7px; }
+    .vb { flex: 1; padding: 8px 4px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; font-size: 11.5px; font-weight: 800; transition: all .14s; }
+    .vb-y { background:#daf4ea; color:#0d6040; border-color:#a8e8cc; }
+    .vb-m { background:#fef3d7; color:#8a5500; border-color:#fad87a; }
+    .vb-s { background:#fde8e8; color:#b30000; border-color:#f5b3b3; }
+    .vb-y.sel { background:var(--teal); color:#fff; border-color:var(--teal); }
+    .vb-m.sel { background:var(--amber); color:var(--navy); border-color:var(--amber); }
+    .vb-s.sel { background:#e03030; color:#fff; border-color:#e03030; }
+    .vote-sum { background: var(--navy); color:#fff; border-radius:16px; padding:22px 24px; margin-top:26px; }
+    .vote-sum h3 { font-size:14px; margin-bottom:12px; opacity:.72; }
+    #vsummary { font-size:13px; line-height:1.85; }
+
+    /* Excitement meter */
+    .excite { display:flex; gap:2px; margin-top:5px; }
+    .excite-pip { width:14px; height:6px; border-radius:2px; background:#e0e8f0; }
+    .excite-pip.on { background: var(--amber); }
+    .excite-lbl { font-size:10px; color:var(--muted); margin-left:5px; }
+
+    /* ══════ MAP ══════ */
+    #map-el { height: 520px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+
+    /* ══════ WEATHER ══════ */
+    .wx-card { padding: 22px 18px; text-align: center; }
+    .wx-loc { font-weight: 800; font-size: 14px; margin-bottom: 3px; }
+    .wx-date { font-size: 11px; color: var(--muted); margin-bottom: 16px; }
+    .wx-icon { font-size: 3.2rem; margin-bottom: 8px; line-height: 1; }
+    .wx-desc { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+    .wx-temps { font-size: 1.5rem; font-weight: 900; color: var(--navy); margin-bottom: 8px; }
+    .wx-rain { font-size: 12.5px; color: #2a7ab8; margin-bottom: 6px; }
+    .wx-tip { font-size: 11px; color: var(--muted); }
+    .wx-spin { color: var(--muted); font-size: 13px; }
+    .wx-err { color: #c03030; font-size: 12px; }
+
+    /* ══════ QUIZ ══════ */
+    .quiz-wrap { max-width: 680px; margin: 0 auto; }
+    .qprog-bar { height: 7px; background: #dde5ef; border-radius: 99px; overflow: hidden; margin-bottom: 26px; }
+    .qprog-fill { height: 100%; background: var(--teal); border-radius: 99px; transition: width .35s; }
+    .quiz-card { padding: 26px 28px; margin-bottom: 18px; }
+    .qnum { font-size: 11px; color: var(--muted); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+    .qtxt { font-size: 1.05rem; font-weight: 800; margin-bottom: 20px; line-height: 1.45; color: var(--navy); }
+    .qopts { display: flex; flex-direction: column; gap: 9px; }
+    .qopt { padding: 12px 15px; border-radius: 12px; border: 2px solid var(--border); cursor: pointer; font-size: 13.5px; background: #fff; text-align: left; transition: border-color .12s, background .12s; line-height: 1.35; }
+    .qopt:hover:not(:disabled) { border-color: var(--teal); background: #e8f8f1; }
+    .qopt.correct { border-color:var(--teal) !important; background:#daf4ea !important; color:#0a5e38 !important; font-weight:700; }
+    .qopt.wrong   { border-color:#e03030 !important; background:#fde8e8 !important; color:#900 !important; font-weight:700; }
+    .qfact { display:none; margin-top:14px; padding:14px 16px; background:linear-gradient(135deg,#e6f5fd,#e4f8f0); border-left:4px solid var(--teal); border-radius:0 10px 10px 0; font-size:12.5px; line-height:1.55; color:#1a3a2a; }
+    .quiz-nav { display:flex; justify-content:flex-end; margin-top:14px; }
+    .qnext { display:none; background:var(--teal); color:#fff; border:none; padding:10px 24px; border-radius:12px; font-weight:800; font-size:13px; cursor:pointer; transition:background .14s,transform .12s; }
+    .qnext:hover { background:#178a62; transform:translateY(-1px); }
+    .qresult { display:none; padding:44px 28px; text-align:center; }
+    .rscore { font-size:4rem; font-weight:900; color:var(--teal); line-height:1; }
+    .rgrade { font-size:1.5rem; font-weight:800; color:var(--navy); margin:8px 0 6px; }
+    .rtxt { color:var(--muted); margin-bottom:24px; font-size:14px; }
+    .qretry { background:var(--amber); color:var(--navy); border:none; padding:12px 28px; border-radius:14px; font-weight:800; font-size:14px; cursor:pointer; transition:transform .12s,box-shadow .14s; }
+    .qretry:hover { transform:translateY(-2px); box-shadow:0 5px 16px rgba(239,159,39,.45); }
+
+    /* ══════ FOOD ══════ */
+    .food-card { padding: 18px; }
+    .food-icon { font-size: 2rem; margin-bottom: 8px; }
+    .food-name { font-weight: 800; font-size: 14px; margin-bottom: 4px; }
+    .food-desc { font-size: 12px; color: var(--muted); line-height: 1.45; }
+    .food-tip { font-size: 11.5px; color: var(--teal); font-style: italic; margin-top: 8px; font-weight: 600; }
+    .weird { background:#1a0808; border:1px solid #6a1010; border-radius:14px; padding:15px 16px; display:flex; gap:12px; }
+    .weird-ico { font-size:1.6rem; flex-shrink:0; margin-top:1px; }
+    .weird-nm { font-weight:800; font-size:13px; margin-bottom:3px; color:#ff7777; }
+    .weird-dc { font-size:12px; color:#cc9999; line-height:1.4; }
+    .dare-btn { display:inline-block; margin-top:8px; background:#cc1111; color:#fff; font-size:10px; font-weight:800; padding:3px 10px; border-radius:99px; letter-spacing:.05em; }
+  </style>
+</head>
+<body>
+
+<!-- CHRISTMAS LIGHTS STRIP -->
+<div class="xmas-lights" id="xmas-lights-strip"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="tab-btn active" onclick="showTab('overview',this)">🗺️ Trip Overview</button>
+  <button class="tab-btn" onclick="showTab('activities',this)">⭐ Choose Activities</button>
+  <button class="tab-btn" onclick="showTab('map',this)">📍 Map</button>
+  <button class="tab-btn" onclick="showTab('itinerary',this)">📅 Build Itinerary</button>
+  <button class="tab-btn" onclick="showTab('weather',this)">🌤️ Weather</button>
+  <button class="tab-btn" onclick="showTab('quiz',this)">🧠 Iceland Quiz</button>
+  <button class="tab-btn" onclick="showTab('food',this)">🍽️ Food Guide</button>
+  <button class="tab-btn" onclick="showTab('packing',this)">🎒 Packing</button>
+  <button class="tab-btn" onclick="showTab('money',this)">💰 Money</button>
+</nav>
+
+<!-- ══════════════════════════════════════
+     TAB 1 — OVERVIEW
+══════════════════════════════════════ -->
+<div id="panel-overview" class="panel active">
+  <div class="hero">
+    <div class="aurora"><div class="al"></div><div class="al"></div><div class="al"></div></div>
+    <div class="hero-inner">
+      <div class="hero-flag">🇮🇸</div>
+      <h1>Patchie's Middle School Trip:<br>Iceland Adventure</h1>
+      <p class="hero-sub">Dada &amp; Patchie · April 2026 · Hot Tubs, Lagoons &amp; Waterfalls</p>
+      <p class="hero-st st-flicker">✦ &nbsp; <span class="st-glow-text">THE STRANGER THINGS WATERFALL AWAITS</span> &nbsp; ✦</p>
+
+      <div class="countdown">
+        <div class="cdu"><span class="cdn" id="cd-d">--</span><span class="cdl">Days</span></div>
+        <div class="cdc">:</div>
+        <div class="cdu"><span class="cdn" id="cd-h">--</span><span class="cdl">Hrs</span></div>
+        <div class="cdc">:</div>
+        <div class="cdu"><span class="cdn" id="cd-m">--</span><span class="cdl">Mins</span></div>
+        <div class="cdc">:</div>
+        <div class="cdu"><span class="cdn" id="cd-s">--</span><span class="cdl">Secs</span></div>
+      </div>
+
+      <div class="fact-box" id="fact-box">Loading a fun Iceland fact…</div>
+      <button class="fact-btn" onclick="nextFact()">✨ Another Iceland Fact</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <h2 class="sec-head">✈️ Flights — Icelandair</h2>
+    <div class="g2" style="margin-bottom:32px">
+
+      <div class="card">
+        <div class="fl-head">
+          <div><div class="fl-airline">ICELANDAIR · FI455</div><div class="fl-num">Friday 17 April 2026</div></div>
+          <div class="fl-class">Economy Light</div>
+        </div>
+        <div class="fl-route">
+          <div class="fl-city"><div class="fl-code">LHR</div><div class="fl-port">London Heathrow</div><div class="fl-time">9:25pm</div></div>
+          <div class="fl-mid"><div class="fl-dur">3h 10m · Nonstop</div><div class="fl-line"></div></div>
+          <div class="fl-city"><div class="fl-code">KEF</div><div class="fl-port">Keflavík Airport</div><div class="fl-time">11:35pm</div></div>
+        </div>
+        <div class="fl-foot">
+          <span>Icelandair · Economy Light</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="fl-head">
+          <div><div class="fl-airline">ICELANDAIR · FI454</div><div class="fl-num">Sunday 19 April 2026</div></div>
+          <div class="fl-class">Economy Light</div>
+        </div>
+        <div class="fl-route">
+          <div class="fl-city"><div class="fl-code">KEF</div><div class="fl-port">Keflavík Airport</div><div class="fl-time">4:10pm</div></div>
+          <div class="fl-mid"><div class="fl-dur">3h 10m · Nonstop</div><div class="fl-line"></div></div>
+          <div class="fl-city"><div class="fl-code">LHR</div><div class="fl-port">London Heathrow</div><div class="fl-time">8:20pm</div></div>
+        </div>
+        <div class="fl-foot">
+          <span>Icelandair · Economy Light</span>
+        </div>
+      </div>
+
+    </div>
+
+    <h2 class="sec-head">🏨 Hotels</h2>
+    <div class="g2" style="margin-bottom:32px">
+
+      <div class="card">
+        <img class="card-img" src="marriott-room.avif"
+          onerror="this.onerror=null;this.style.cssText='height:200px;background:linear-gradient(135deg,#0a2540,#1D9E75);display:block;width:100%'"
+          alt="Courtyard Marriott Keflavík Room">
+        <div class="card-body">
+          <div class="card-ttl">Courtyard by Marriott Keflavík Airport</div>
+          <div class="card-meta">Night 1 · Check-in Apr 17 (late arrival) · Check-out Apr 18 noon</div>
+          <span class="badge bt">Right at Airport</span>
+          <span class="badge bn">Land 11:35pm</span>
+          <p class="card-note">Land, pick up the Jimny keys, check in, crash out. Zero planning needed — pure survival mode tonight. 😴</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <img class="card-img" src="https://lirp.cdn-website.com/51ff57fe/dms3rep/multi/opt/Spa-photo--1-1920w.jpeg"
+          onerror="this.onerror=null;this.src='hotel-island-spa.jpg'"
+          alt="Hotel Ísland Spa">
+        <div class="card-body">
+          <div class="card-ttl">Hotel Ísland Spa &amp; Wellness</div>
+          <div class="card-meta">Night 2 · Check-in anytime after 2pm · Check-out Apr 19 11am</div>
+          <span class="badge bt">♨️ Spa &amp; Hot Tub</span>
+          <span class="badge ba">Reykjavík</span>
+          <p class="card-note">Hot tub: 40–41°C 🔥 Cold tub: 5–8°C 🧊 Pool: 34–36°C 🏊 The perfect wind-down after a full adventure day!</p>
+        </div>
+      </div>
+
+    </div>
+
+    <h2 class="sec-head">🚗 The Jimny — Blue Car Rental</h2>
+    <div class="card jimny" style="margin-bottom:40px">
+      <img class="jimny-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Moscow%2C_Suzuki_Jimny_%284th_generation%29_white_Mar_2026_02.jpg/800px-Moscow%2C_Suzuki_Jimny_%284th_generation%29_white_Mar_2026_02.jpg"
+        onerror="this.onerror=null;this.src='jimny.png'"
+        alt="Suzuki Jimny">
+      <div class="card-body" style="padding:20px 22px">
+        <div class="card-ttl">Suzuki Jimny 4WD 🛻</div>
+        <div class="card-meta">Pick up: Apr 18, Keflavík Airport · Drop off: Apr 19, 2:00pm</div>
+        <span class="badge bt">4WD</span>
+        <span class="badge ba">Highlands capable</span>
+        <p class="card-note" style="margin-top:10px">Compact, rugged, and perfect for F-roads up to Háifoss. It's like the expedition vehicle of small cars!</p>
+        <p class="card-note" style="margin-top:6px;color:#b36000">⚠️ F-roads to Háifoss require 4WD — that's exactly why we have this beast.</p>
+      </div>
+    </div>
+
+    <h2 class="sec-head">✈️ Our Flight Path</h2>
+    <div class="card" style="margin-bottom:40px;overflow:hidden">
+      <div id="flight-map-el" style="height:340px"></div>
+      <div style="padding:12px 18px;display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--muted);border-top:1px solid var(--border);align-items:center">
+        <span>🛫 <strong>London Heathrow</strong> → <strong>Keflavík, Iceland</strong></span>
+        <span>📏 ~2,000 km</span>
+        <span>⏱ 3h 10m nonstop</span>
+        <span>🗓️ Fri 17 Apr · 9:25pm BST</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 2 — CHOOSE ACTIVITIES
+══════════════════════════════════════ -->
+<div id="panel-activities" class="panel">
+  <div class="wrap">
+    <h2 class="sec-head">⭐ Vote on Activities</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Both Dada and Patchie should vote! Your combined YES votes help plan the itinerary. ⚡</p>
+    <div class="g3" id="vote-grid"></div>
+    <div class="vote-sum">
+      <h3>📋 Your Votes</h3>
+      <div id="vsummary">No votes yet — cast your YES / MAYBE / SKIP votes above!</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 3 — MAP
+══════════════════════════════════════ -->
+<div id="panel-map" class="panel">
+  <div class="wrap">
+    <h2 class="sec-head">📍 Iceland Trip Map</h2>
+    <div id="map-el"></div>
+    <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:7px">
+      <span class="badge bt">🟢 Hotels &amp; Reykjavík</span>
+      <span class="badge ba">🟡 Waterfalls</span>
+      <span class="badge bn">🔵 Lagoons &amp; Spas</span>
+      <span class="badge br">🔴 Golden Circle</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 4 — BUILD ITINERARY
+══════════════════════════════════════ -->
+<div id="panel-itinerary" class="panel">
+  <div class="wrap">
+    <h2 class="sec-head">📅 Build Your Itinerary</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Drag activities from the pool into Saturday or Sunday. Friday is arrival night — locked.</p>
+    <div class="itin">
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <div class="day-col">
+          <div class="day-head dh-fri">
+            <span>🛬 Friday 17 April — Arrival Night</span>
+            <span class="day-hint">🔒 Locked</span>
+          </div>
+          <div style="padding:10px">
+            <div class="locked-it"><strong>✈️ Land Keflavík ~11:35pm</strong>Collect luggage, pick up Suzuki Jimny, check into Courtyard Marriott. Sleep. Zzz 😴</div>
+          </div>
+        </div>
+
+        <div class="day-col">
+          <div class="day-head dh-sat">
+            <span>⚡ Saturday 18 April — Adventure Day!</span>
+            <span class="day-hint" id="sat-est"></span>
+          </div>
+          <div class="dz" id="dz-sat" ondragover="onDragOver(event)" ondrop="onDrop(event,'sat')" ondragleave="onDragLeave(event)">
+            <div class="dz-hint" id="hint-sat">← Drag activities here</div>
+          </div>
+        </div>
+
+        <div class="day-col">
+          <div class="day-head dh-sun">
+            <span>✌️ Sunday 19 April — Chill Day</span>
+            <span class="day-hint" id="sun-est"></span>
+          </div>
+          <div class="dz" id="dz-sun" ondragover="onDragOver(event)" ondrop="onDrop(event,'sun')" ondragleave="onDragLeave(event)">
+            <div class="dz-hint" id="hint-sun">← Drag here (check-out 11am, fly 4:10pm)</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="pool-col">
+        <div class="pool-hd">🎒 Activity Pool — drag to a day!</div>
+        <div class="dz" id="dz-pool" ondragover="onDragOver(event)" ondrop="onDrop(event,'pool')" ondragleave="onDragLeave(event)" style="min-height:300px;padding:10px;gap:7px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 5 — WEATHER
+══════════════════════════════════════ -->
+<div id="panel-weather" class="panel">
+  <div class="wrap">
+    <h2 class="sec-head">🌤️ Trip Forecast</h2>
+    <div class="g3" id="wx-grid"></div>
+    <p style="font-size:11px;color:var(--muted);margin-top:14px">Live data from open-meteo.com · No API key · Reykjavík timezone</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 6 — QUIZ
+══════════════════════════════════════ -->
+<div id="panel-quiz" class="panel">
+  <div class="wrap">
+    <h2 class="sec-head">🧠 Iceland Expert Quiz</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px">8 questions. Can you beat Dada? 🏆</p>
+    <div class="quiz-wrap">
+      <div class="qprog-bar"><div class="qprog-fill" id="qprog" style="width:0%"></div></div>
+      <div id="quiz-area"></div>
+      <div class="card qresult" id="qresult">
+        <div class="rscore" id="rscore"></div>
+        <div class="rgrade" id="rgrade"></div>
+        <div class="rtxt" id="rtxt"></div>
+        <button class="qretry" onclick="startQuiz()">Try Again 🔄</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 7 — FOOD GUIDE
+══════════════════════════════════════ -->
+<div id="panel-food" class="panel">
+  <div class="wrap">
+    <h2 class="sec-head">🍽️ Patchie's Iceland Food Guide</h2>
+    <h3 style="color:var(--teal);font-size:14px;margin-bottom:14px">✅ Patchie-Approved Eats</h3>
+    <div class="g3" id="food-yes" style="margin-bottom:30px"></div>
+    <h3 style="color:#ff5555;font-size:14px;margin-bottom:6px">💀 Danger Zone — Avoid or Dare Dada!</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">These are REAL Icelandic foods. Do not let Dada chicken out. 😈</p>
+    <div style="display:flex;flex-direction:column;gap:10px" id="food-weird"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 8 — PACKING LIST
+══════════════════════════════════════ -->
+<div id="panel-packing" class="panel">
+  <div class="wrap">
+    <h2 class="sec-head">🎒 Patchie's Packing List</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:22px">Tap each item to check it off as you pack! ✅</p>
+    <div class="pack-grid">
+
+      <div class="pack-section">
+        <div class="pack-hd pack-hd-essential">🧳 The Essentials</div>
+        <div class="pack-items" id="pack-essential"></div>
+      </div>
+
+      <div class="pack-section">
+        <div class="pack-hd pack-hd-swim">🏊 Hot Tub &amp; Lagoon Kit</div>
+        <div class="pack-items" id="pack-swim"></div>
+      </div>
+
+      <div class="pack-section">
+        <div class="pack-hd pack-hd-fun">🎮 Fun &amp; Entertainment</div>
+        <div class="pack-items" id="pack-fun"></div>
+      </div>
+
+      <div class="pack-section">
+        <div class="pack-hd" style="background:#6a3d9a;color:#fff">🧥 Clothes for Iceland</div>
+        <div class="pack-items" id="pack-clothes"></div>
+      </div>
+
+    </div>
+    <div style="background:linear-gradient(135deg,#e6f5fd,#e4f8f0);border-left:4px solid var(--teal);border-radius:0 12px 12px 0;padding:14px 18px;font-size:12.5px;line-height:1.6;margin-top:4px">
+      💡 <strong>Iceland weather tip:</strong> April in Iceland = 4–10°C, wind, possible snow AND sunshine — all in the same day. Layer up like an onion! 🧅
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 9 — ICELAND MONEY
+══════════════════════════════════════ -->
+<div id="panel-money" class="panel">
+  <div class="wrap">
+    <h2 class="sec-head">💰 Iceland Money</h2>
+
+    <div class="rate-banner">
+      <div class="rate-item">
+        <div class="rate-flag">🇮🇸</div>
+        <div style="font-size:11px;opacity:.6;margin-bottom:6px">ICELAND KRÓNA (ISK)</div>
+        <div style="font-size:13px;opacity:.85;line-height:1.7">
+          1,000 kr = <strong style="color:var(--amber)">$7.35 USD</strong><br>
+          1,000 kr = <strong style="color:var(--amber)">£5.88 GBP</strong>
+        </div>
+      </div>
+      <div class="rate-divider"></div>
+      <div class="rate-item">
+        <div style="font-size:1rem;font-weight:800;margin-bottom:8px">🧠 Easy way to think about it:</div>
+        <div style="font-size:12.5px;line-height:1.8;opacity:.85">
+          100 kr ≈ 73¢ (less than a dollar!)<br>
+          1,000 kr ≈ $7 USD / £6 GBP<br>
+          10,000 kr ≈ $74 USD / £59 GBP<br>
+          <span style="color:var(--amber);font-size:11px">Everything in Iceland looks expensive — it's just big numbers! 😅</span>
+        </div>
+      </div>
+      <div class="rate-divider"></div>
+      <div class="rate-item">
+        <div style="font-size:1rem;font-weight:800;margin-bottom:8px">💳 Good to know</div>
+        <div style="font-size:12px;line-height:1.8;opacity:.85">
+          Cards accepted <em>everywhere</em><br>
+          No need for cash usually<br>
+          Tipping not expected 🙌<br>
+          <span style="color:var(--amber);font-size:11px">Iceland is one of the most cashless countries in the world!</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:14px;font-weight:800;color:var(--navy);margin-bottom:14px">🛒 How Much Does Stuff Cost?</h3>
+    <div style="border-radius:14px;overflow:hidden;border:1px solid var(--border)">
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>🇮🇸 Iceland</th>
+          <th>🇬🇧 London</th>
+          <th>🇺🇸 USA</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="item-ico">🌭</span><span class="item-name">Hot Dog (Pylsur)<span class="item-note">The famous Icelandic hot dog!</span></span></td>
+          <td><span class="price-isk">700 kr</span><br><small>≈ $5</small></td>
+          <td>£3.50</td>
+          <td>$3</td>
+        </tr>
+        <tr>
+          <td><span class="item-ico">🍦</span><span class="item-name">Ice Cream Cone<span class="item-note">Ísbúð / ice cream shop</span></span></td>
+          <td><span class="price-isk">900 kr</span><br><small>≈ $7</small></td>
+          <td>£3</td>
+          <td>$4</td>
+        </tr>
+        <tr>
+          <td><span class="item-ico">🧃</span><span class="item-name">Can of Coke<span class="item-note">From a shop</span></span></td>
+          <td><span class="price-isk">350 kr</span><br><small>≈ $2.60</small></td>
+          <td>£1.20</td>
+          <td>$1.50</td>
+        </tr>
+        <tr>
+          <td><span class="item-ico">🧦</span><span class="item-name">Wool Socks (Lopi)<span class="item-note">Famous Icelandic wool — super warm!</span></span></td>
+          <td><span class="price-isk">3,500 kr</span><br><small>≈ $26</small></td>
+          <td>£18</td>
+          <td>$28</td>
+        </tr>
+        <tr>
+          <td><span class="item-ico">🪨</span><span class="item-name">Lava Rock Souvenir<span class="item-note">Magnet / keyring</span></span></td>
+          <td><span class="price-isk">1,200 kr</span><br><small>≈ $9</small></td>
+          <td>£5</td>
+          <td>$8</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="money-tip">
+      💡 <strong>Pro tip for Patchie:</strong> If you see something that costs 5,000 kr, just knock off three zeros and halve it — that's roughly the dollar price! So 5,000 kr ÷ 1000 × 7 ≈ <strong>$35</strong>. Iceland is expensive, so think carefully before buying! 🤔
+    </div>
+  </div>
+</div>
+
+<!-- LEAFLET -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+// ══════════════════════════════
+// CHRISTMAS LIGHTS
+// ══════════════════════════════
+(function(){
+  const strip = document.getElementById('xmas-lights-strip');
+  const cols = ['br','bb','bg','by','bo'];
+  const count = Math.ceil(window.innerWidth / 28) + 4;
+  for(let i=0;i<count;i++){
+    const c = cols[i % cols.length];
+    strip.innerHTML += `<div class="bulb-wrap"><div class="bulb-wire"></div><div class="bulb ${c}"></div></div>`;
+  }
+})();
+
+// ══════════════════════════════
+// DATA
+// ══════════════════════════════
+const ACTS = [
+  { id:'haifoss',    name:'Háifoss Waterfall',     hrs:3.5, dur:'3–4 hrs', region:'South Highlands',  excite:5, drive:'~2 hr from Reykjavík',
+    must:true, desc:'The ACTUAL Stranger Things waterfall — 122m tall canyon hike. This is the one.',
+    lat:64.017, lng:-19.511,
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Sunset_At_Haifoss_Waterfall_Iceland_Travel_Photography_%28207770727%29.jpeg/960px-Sunset_At_Haifoss_Waterfall_Iceland_Travel_Photography_%28207770727%29.jpeg',
+    img2:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Haifoss_%2814274172716%29.jpg/800px-Haifoss_%2814274172716%29.jpg' },
+
+  { id:'laugaras',   name:'Laugarás Lagoon',        hrs:2.5, dur:'2–3 hrs', region:'SW Iceland',       excite:5, drive:'~1 hr from Reykjavík',
+    must:false, desc:"💦 Waterfall swim! Geothermal lagoon with a waterfall you can actually swim underneath.",
+    lat:64.002, lng:-20.533,
+    img:'https://s1.it.atcdn.net/wp-content/uploads/2025/07/Laugaras-Lagoon-Lower-Lagoon-1-800x600.jpg',
+    img2:'https://gti.images.tshiftcdn.com/10921187/x/0/upper-lagoon-2.jpg' },
+
+  { id:'skylagoon',  name:'Sky Lagoon',              hrs:2.5, dur:'2–3 hrs', region:'15 min Reykjavík', excite:4, drive:'~15 min from centre',
+    must:false, desc:"Infinity pool right at the ocean's edge — dramatic lava horizon and the 7-step Skjól ritual.",
+    lat:64.099, lng:-22.019,
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Glow_over_the_Spa_%283063898052%29.jpg/960px-Glow_over_the_Spa_%283063898052%29.jpg',
+    img2:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/The_blue_Lagoon%2C_Iceland_%285454149170%29.jpg/800px-The_blue_Lagoon%2C_Iceland_%285454149170%29.jpg' },
+
+  { id:'bluelagoon', name:'Blue Lagoon',              hrs:2.5, dur:'2–3 hrs', region:'Near Keflavík',    excite:4, drive:'~45 min from Reykjavík',
+    must:false, desc:'World-famous milky-blue silica spa glowing turquoise against black lava rock. Iconic.',
+    lat:63.880, lng:-22.449,
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Blue_Lagoon_Overview.JPG/960px-Blue_Lagoon_Overview.JPG',
+    img2:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/The_blue_Lagoon%2C_Iceland_%285454149170%29.jpg/800px-The_blue_Lagoon%2C_Iceland_%285454149170%29.jpg' },
+
+  { id:'geysir',     name:'Geysir & Strokkur',       hrs:1.5, dur:'1–2 hrs', region:'Golden Circle',    excite:4, drive:'~1.5 hr from Reykjavík',
+    must:false, desc:'Strokkur erupts 30 METRES into the air every 5 minutes. Stand right at the front!',
+    lat:64.312, lng:-20.302,
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Strokkur_Geysir_Iceland_2005-7.JPG/960px-Strokkur_Geysir_Iceland_2005-7.JPG',
+    img2:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Strokkur_geyser_Iceland_Img_2678.jpg/800px-Strokkur_geyser_Iceland_Img_2678.jpg' },
+
+  { id:'gullfoss',   name:'Gullfoss Waterfall',       hrs:1,   dur:'1 hr',   region:'Golden Circle',    excite:4, drive:'~2 hr from Reykjavík',
+    must:false, desc:'Massive two-tiered waterfall thundering into a canyon — The Golden Falls.',
+    lat:64.327, lng:-20.122,
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Gullfoss.jpg/960px-Gullfoss.jpg',
+    img2:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Gullfoss%2C_an_iconic_waterfall_of_Iceland.jpg/960px-Gullfoss%2C_an_iconic_waterfall_of_Iceland.jpg' },
+
+  { id:'seljafoss',  name:'Seljalandsfoss',            hrs:1,   dur:'1 hr',   region:'South Coast',      excite:5, drive:'~1.75 hr from Reykjavík',
+    must:false, desc:'Walk BEHIND the waterfall through a cave. You WILL get soaked. 100% worth it.',
+    lat:63.615, lng:-19.989,
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Seljalandsfoss.jpg/800px-Seljalandsfoss.jpg',
+    img2:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Seljalandsfoss%2C_Su%C3%B0urland%2C_Islandia%2C_2014-08-16%2C_DD_201-203_HDR.JPG/960px-Seljalandsfoss%2C_Su%C3%B0urland%2C_Islandia%2C_2014-08-16%2C_DD_201-203_HDR.JPG' },
+
+  { id:'reykjavik',  name:'Explore Reykjavík',         hrs:3,   dur:'2–4 hrs', region:'Reykjavík',       excite:3, drive:'In Reykjavík',
+    must:false, desc:'Colourful streets, Hallgrímskirkja rocket-church, famous harbour hot dogs, street art.',
+    lat:64.136, lng:-21.895,
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Reykjavik-20-Stadtsilhouette-2018-gje.jpg/960px-Reykjavik-20-Stadtsilhouette-2018-gje.jpg',
+    img2:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Hallgrimskirkja1_RVG.JPG/800px-Hallgrimskirkja1_RVG.JPG' },
+
+  { id:'puffins',    name:'Puffin Watching',            hrs:1,   dur:'1 hr',   region:'Reykjavík Harbour',excite:3, drive:'Reykjavík harbour',
+    must:false, desc:"World's largest puffin colony! Tiny, round, absolutely hilarious birds near the harbour.",
+    lat:64.150, lng:-21.940,
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Atlantic_Puffin_Iceland.JPG/960px-Atlantic_Puffin_Iceland.JPG',
+    img2:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Fratercula_arctica_01.jpg/800px-Fratercula_arctica_01.jpg' },
+];
+
+const FACTS = [
+  "🌋 Iceland has about 130 volcanoes — 30 are active. A major eruption happens every 4–5 years!",
+  "🌞 In April, Iceland gets around 15 hours of daylight. The sun sets at nearly 9pm!",
+  "🐑 Iceland has more sheep than people — 800,000 sheep vs 370,000 humans. Baa! 🐑",
+  "🍦 Icelanders eat ice cream in literally any weather. Even in blizzards. It's the law.",
+  "♨️ About 90% of Icelandic homes are heated by geothermal energy from underground hot springs.",
+  "🦊 The Arctic Fox is Iceland's only native land mammal — it walked there over sea ice!",
+  "⚡ Iceland generates nearly 100% of its electricity from renewables — hydro and geothermal.",
+  "🌊 The English word 'geyser' literally comes from Iceland. Geysir was the original!",
+  "🇮🇸 Iceland has NO army. It is consistently the world's most peaceful country.",
+  "🌡️ Average April temp in Reykjavík: ~5°C. Cold? Yes. Worth it? ABSOLUTELY.",
+  "📖 Icelanders read more books per capita than any other nation on Earth.",
+  "🧊 Iceland is actually green. Greenland is icy. Erik the Red named them backwards ON PURPOSE to confuse settlers.",
+  "🔥 You can bake rye bread by burying it next to a hot spring overnight. Seriously.",
+  "🦈 Hákarl (fermented shark) is buried for 3 months then dried. Bourdain called it 'the worst thing I've ever eaten.' Dare Dada.",
+  "🚗 Iceland drives on the RIGHT side — same as Europe, opposite to the UK!",
+  "👁️ Háifoss waterfall literally appeared in Stranger Things. YOU ARE GOING THERE.",
+  "🌈 Iceland has about 1,300 waterfalls. You're visiting some of the most epic ones.",
+  "🏊 Reykjavík's outdoor geothermal swimming pools are used by locals ALL YEAR ROUND, even in January.",
+];
+
+const QUIZ = [
+  { q:"What is the capital city of Iceland?",
+    opts:["Akureyri","Reykjavík","Keflavík","Ísafjörður"], ans:1,
+    fact:"Reykjavík means 'Smoky Bay' — named for steam from geothermal vents. It's the world's northernmost capital city. About two-thirds of Iceland's 370,000 people live there!" },
+  { q:"How tall is Háifoss waterfall?",
+    opts:["62 metres","88 metres","122 metres","195 metres"], ans:2,
+    fact:"At 122 metres, Háifoss is one of Iceland's tallest waterfalls. It plunges into the Fossá river canyon. YOU WILL BE STANDING NEXT TO IT ON SATURDAY! 🤯" },
+  { q:"What causes Iceland's geothermal activity?",
+    opts:["Underground nuclear reactions","Iceland sits on the Mid-Atlantic Ridge — two tectonic plates pulling apart","Arctic ice melting underground","A supervolcano that never stopped"], ans:1,
+    fact:"Iceland sits on the Mid-Atlantic Ridge where the North American and Eurasian plates pull apart at ~2.5cm per year. This creates ALL the volcanoes, geysers, and hot springs!" },
+  { q:"Where does the word 'geyser' come from?",
+    opts:["Old Norse for 'boiling spring'","The Geysir geyser in Iceland","An Icelandic explorer's name","A German geological term"], ans:1,
+    fact:"The Great Geysir in Iceland gave its name to ALL geysers worldwide! 'Geysir' comes from Old Norse 'gjósa' meaning 'to gush'. Nearby Strokkur erupts every 4–8 minutes still!" },
+  { q:"What makes the Blue Lagoon's water milky turquoise?",
+    opts:["It reflects the Icelandic sky","Silica particles dissolved in the geothermal water","Blue dye added for tourists","Copper minerals in the lava"], ans:1,
+    fact:"Tiny silica (basically glass!) particles scatter blue light to create that glow. You smear the white silica mud on your face — it's weirdly satisfying." },
+  { q:"What percentage of Iceland's electricity is renewable?",
+    opts:["About 50%","About 70%","About 85%","Nearly 100%"], ans:3,
+    fact:"Iceland generates nearly 100% of its electricity from renewables — ~70% hydropower and ~30% geothermal. They have SO much surplus clean power they make aluminium for other countries!" },
+  { q:"What is a 'pylsur'?",
+    opts:["An Icelandic wool sweater","Iceland's legendary hot dog","A type of geothermal fishing","A traditional Viking dance"], ans:1,
+    fact:"Pylsur are Icelandic hot dogs — a national obsession! Lamb-pork-beef blend, completely unlike normal hot dogs. Order 'ein með öllu' (one with everything): ketchup, remoulade, mustard, raw onion AND crispy fried onion. 🌭" },
+  { q:"Which TV show filmed at Háifoss waterfall?",
+    opts:["Game of Thrones","The Witcher","Stranger Things","The Last of Us"], ans:2,
+    fact:"STRANGER THINGS filmed at Háifoss! The dramatic highland canyon appeared in the show. Iceland's otherworldly landscape is the go-to for sci-fi and fantasy productions. You're going to a filming location! 🎬" },
+];
+
+const PINS = [
+  { lat:63.985, lng:-22.605, name:'Courtyard Marriott Keflavík',    desc:'Night 1 — land, grab Jimny, sleep',            col:'#1D9E75', ico:'🏨' },
+  { lat:64.148, lng:-21.941, name:'Hotel Ísland Spa & Wellness',    desc:'Night 2 — hot tub: 40-41°C! Cold tub: 5-8°C!', col:'#1D9E75', ico:'♨️' },
+  { lat:64.017, lng:-19.511, name:'Háifoss — Stranger Things Fall', desc:'122m tall — MUST DO! As seen in Stranger Things', col:'#EF9F27', ico:'💧', drive:'~2 hr from Reykjavík' },
+  { lat:63.615, lng:-19.989, name:'Seljalandsfoss',                 desc:'Walk BEHIND the waterfall — you WILL get soaked', col:'#EF9F27', ico:'💧', drive:'~1.75 hr from Reykjavík' },
+  { lat:64.327, lng:-20.122, name:'Gullfoss',                       desc:'Two-tiered canyon waterfall',                    col:'#EF9F27', ico:'💧', drive:'~2 hr from Reykjavík' },
+  { lat:64.002, lng:-20.533, name:"Laugarás Lagoon",                desc:'Waterfall swim! Geothermal lagoon',              col:'#3a7abb', ico:'♨️', drive:'~1 hr from Reykjavík' },
+  { lat:64.099, lng:-22.019, name:'Sky Lagoon',                     desc:'Infinity pool at the ocean edge',                col:'#3a7abb', ico:'♨️', drive:'~15 min from centre' },
+  { lat:63.880, lng:-22.449, name:'Blue Lagoon',                    desc:'Famous milky-blue silica spa',                   col:'#3a7abb', ico:'♨️', drive:'~45 min from Reykjavík' },
+  { lat:64.312, lng:-20.302, name:'Geysir & Strokkur',              desc:'Erupts 30m every 5 minutes!',                    col:'#e63946', ico:'🌋', drive:'~1.5 hr from Reykjavík' },
+  { lat:64.136, lng:-21.895, name:'Reykjavík City',                 desc:'Hallgrímskirkja, hot dogs, harbour & colour',    col:'#1D9E75', ico:'🏙️', drive:'In Reykjavík' },
+  { lat:64.150, lng:-21.940, name:'Reykjavík Harbour / Puffins',   desc:'Puffin watching — tiny round hilarious birds',    col:'#1D9E75', ico:'🐦', drive:'Reykjavík harbour' },
+];
+
+const WX_LOCS = [
+  { name:'Keflavík Airport',  sub:'Fri 17 Apr — Landing night', date:'2026-04-17', lat:63.985, lng:-22.605 },
+  { name:'Háifoss Highlands', sub:'Sat 18 Apr — Adventure day', date:'2026-04-18', lat:64.023, lng:-19.511 },
+  { name:'Reykjavík',         sub:'Sat 18 Apr — Adventure day', date:'2026-04-18', lat:64.136, lng:-21.895 },
+  { name:'Sky Lagoon Area',   sub:'Sun 19 Apr — Chill day',     date:'2026-04-19', lat:64.099, lng:-22.019 },
+];
+
+const WMO = {
+  0:{i:'☀️',d:'Clear sky'}, 1:{i:'🌤️',d:'Mainly clear'}, 2:{i:'⛅',d:'Partly cloudy'},
+  3:{i:'☁️',d:'Overcast'}, 45:{i:'🌫️',d:'Foggy'}, 48:{i:'🌫️',d:'Icy fog'},
+  51:{i:'🌦️',d:'Light drizzle'}, 53:{i:'🌦️',d:'Drizzle'}, 61:{i:'🌧️',d:'Light rain'},
+  63:{i:'🌧️',d:'Rain'}, 65:{i:'🌧️',d:'Heavy rain'}, 71:{i:'🌨️',d:'Light snow'},
+  73:{i:'❄️',d:'Snow'}, 75:{i:'❄️',d:'Heavy snow'}, 80:{i:'🌦️',d:'Rain showers'},
+  81:{i:'🌧️',d:'Showers'}, 82:{i:'⛈️',d:'Heavy showers'}, 95:{i:'⛈️',d:'Thunderstorm'},
+};
+
+const FOOD_YES = [
+  { i:'🌭', n:'Pylsur (Icelandic Hot Dog)',
+    d:'Lamb-pork-beef blend — tastes NOTHING like British hot dogs. Iceland\'s number one street food.',
+    t:'Order "ein með öllu" — ketchup, remoulade, mustard, raw onion AND crispy fried onion. Tell Dada he HAS to try one with everything!' },
+  { i:'🥩', n:'Icelandic Lamb',
+    d:'Free-range sheep roam wild eating wild herbs and berries. The flavour is incredible.',
+    t:'Try kjötsúpa — Icelandic lamb soup. Warm and hearty after a cold day in the highlands. 🍲' },
+  { i:'🥛', n:'Skyr',
+    d:'Iceland\'s famous thick dairy — like Greek yogurt but thicker, creamier, higher in protein.',
+    t:'Try it with berries! Also comes drinkable — perfect on the road between waterfalls.' },
+  { i:'🍦', n:'Ice Cream (Even in the Cold!)',
+    d:'Icelanders eat ice cream in ANY weather, even 2°C. It\'s basically a national law.',
+    t:'Ísbúð Valdís in Reykjavík is legendary. You MUST get a cone. Even if it\'s snowing. 🍦' },
+  { i:'🍕', n:'Pizza',
+    d:'Great pizza in Iceland, sometimes with smoked lamb or unusual Icelandic toppings.',
+    t:'Look for local topping combos — way more interesting than plain margherita.' },
+  { i:'🍝', n:'Pasta',
+    d:'Widely available in Reykjavík. Many restaurants serve excellent Italian-style pasta.',
+    t:'Great option if the local stuff isn\'t calling to you on a given day.' },
+  { i:'🍓', n:'Greenhouse Tomatoes & Fruit',
+    d:'Icelandic greenhouses are heated by geothermal energy. The tomatoes in April are surprisingly sweet.',
+    t:'The greenhouse-grown veg is a genuine surprise — worth trying!' },
+  { i:'🧇', n:'Icelandic Pancakes (Pönnukökur)',
+    d:'Thin crepes rolled with cream and jam — a traditional Icelandic treat, served at cafes everywhere.',
+    t:'Get them with skyr cream and blueberry jam if you can. 😋' },
+];
+
+const FOOD_WEIRD = [
+  { i:'🦈', n:'Hákarl — Fermented Greenland Shark',
+    d:'Buried underground for 3 months, hung to dry for 3 more. Smells strongly of ammonia. Anthony Bourdain called it "the single worst, most disgusting thing I\'ve ever eaten." Dare Dada.' },
+  { i:'🐑', n:'Svið — Boiled Sheep\'s Head',
+    d:'Literally half a sheep\'s head, boiled whole. Eyes included. Traditional Icelandic food going back 1,000 years. You\'ll see it at markets. At minimum, make Dada look at it.' },
+  { i:'🫀', n:'Slátur — Blood Pudding & Liver Sausage',
+    d:'Sheep blood and liver packed into stomach lining. Like extremely intense black pudding. Perfect dare material.' },
+  { i:'🐴', n:'Horsemeat',
+    d:'Legally sold in Iceland since Viking times. Available in supermarkets. Probably skip this one — but absolutely make Dada read the label.' },
+];
+
+// ══════════════════════════════
+// TAB SWITCHING
+// ══════════════════════════════
+let _mapDone=false, _wxDone=false, _qDone=false;
+function showTab(name,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='map'     && !_mapDone){ initMap();     _mapDone=true; }
+  if(name==='weather' && !_wxDone) { loadWeather(); _wxDone=true;  }
+  if(name==='quiz'    && !_qDone)  { startQuiz();   _qDone=true;   }
+}
+
+// ══════════════════════════════
+// COUNTDOWN
+// ══════════════════════════════
+const TARGET = new Date('2026-04-17T21:25:00+01:00');
+function tick(){
+  const diff=TARGET-Date.now();
+  if(diff<=0){['d','h','m','s'].forEach(k=>{document.getElementById('cd-'+k).textContent='00';});return;}
+  document.getElementById('cd-d').textContent=String(Math.floor(diff/86400000)).padStart(2,'0');
+  document.getElementById('cd-h').textContent=String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
+  document.getElementById('cd-m').textContent=String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+  document.getElementById('cd-s').textContent=String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+}
+setInterval(tick,1000); tick();
+
+// ══════════════════════════════
+// FUN FACTS
+// ══════════════════════════════
+let factIdx=0;
+function nextFact(){
+  const box=document.getElementById('fact-box');
+  box.style.opacity='0';
+  setTimeout(()=>{ box.textContent=FACTS[factIdx%FACTS.length]; factIdx++; box.style.opacity='1'; },250);
+}
+nextFact();
+
+// ══════════════════════════════
+
+// ══════════════════════════════
+// EXCITEMENT METER
+// ══════════════════════════════
+function exciteMeter(level, max=5){
+  let h='<div class="excite">';
+  for(let i=1;i<=max;i++) h+=`<div class="excite-pip${i<=level?' on':''}"></div>`;
+  h+=`<span class="excite-lbl">${level===5?'🔥 MAX':'⚡ '.repeat(level).trim()}</span></div>`;
+  return h;
+}
+
+// ══════════════════════════════
+// DRAG & DROP ITINERARY
+// ══════════════════════════════
+let dragging=null;
+function actHTML(a){
+  const must=a.must?' <span class="badge bst">👁️ MUST DO</span>':'';
+  const patch=a.id==='laugaras'?' <span class="badge bpatch">💦 WATERFALL SWIM</span>':'';
+  const onerr=a.img2?`this.onerror=null;this.src='${a.img2}'`:`this.onerror=null;this.style.background='#dde5f4'`;
+  return `<div class="act-card" id="ac-${a.id}" draggable="true"
+    ondragstart="onDragStart(event,'${a.id}')" ondragend="onDragEnd(event)">
+    <img class="act-thumb" src="${a.img}" onerror="${onerr}" alt="">
+    <div>
+      <div class="act-name">${a.name}${must}${patch}</div>
+      <div class="act-desc">${a.desc}</div>
+      <span class="badge bt">⏱ ${a.dur}</span>
+      <span class="badge bn">📍 ${a.region}</span>
+    </div>
+  </div>`;
+}
+function initItinerary(){
+  document.getElementById('dz-pool').innerHTML=ACTS.map(a=>actHTML(a)).join('');
+}
+function onDragStart(e,id){ dragging=id; setTimeout(()=>{const el=document.getElementById('ac-'+id);if(el)el.classList.add('drag');},0); e.dataTransfer.effectAllowed='move'; }
+function onDragEnd(e){ if(dragging){const el=document.getElementById('ac-'+dragging);if(el)el.classList.remove('drag');} }
+function onDragOver(e){ e.preventDefault(); e.dataTransfer.dropEffect='move'; e.currentTarget.classList.add('over'); }
+function onDragLeave(e){ e.currentTarget.classList.remove('over'); }
+function onDrop(e,zone){
+  e.preventDefault(); e.currentTarget.classList.remove('over');
+  if(!dragging) return;
+  const card=document.getElementById('ac-'+dragging);
+  if(!card) return;
+  document.getElementById('dz-'+zone).appendChild(card);
+  const hints={sat:'hint-sat',sun:'hint-sun'};
+  if(hints[zone]){const h=document.getElementById(hints[zone]);if(h)h.style.display='none';}
+  dragging=null; updateEst();
+}
+function updateEst(){
+  ['sat','sun'].forEach(day=>{
+    const cards=document.getElementById('dz-'+day)?.querySelectorAll('.act-card')||[];
+    const el=document.getElementById(day+'-est');
+    if(!el) return;
+    if(!cards.length){el.textContent='';return;}
+    let tot=0;
+    cards.forEach(c=>{const a=ACTS.find(x=>x.id===c.id.replace('ac-',''));if(a)tot+=a.hrs;});
+    el.textContent='~'+tot+'+ hrs planned';
+  });
+}
+initItinerary();
+
+// ══════════════════════════════
+// VOTE
+// ══════════════════════════════
+const votes={};
+function initVotes(){
+  document.getElementById('vote-grid').innerHTML=ACTS.map(a=>{
+    const must=a.must?' 👁️ MUST DO':'';
+    const patch=a.id==='laugaras'?' 💦':'';
+    const onerr=a.img2?`this.onerror=null;this.src='${a.img2}'`:`this.onerror=null;this.style.background='#dde5f4'`;
+    return `
+    <div class="card vote-card" id="vc-${a.id}">
+      <img class="vote-img" src="${a.img}" onerror="${onerr}" alt="${a.name}">
+      <div class="vote-body">
+        <div class="vote-name">${a.name}${must}${patch}</div>
+        <div class="vote-desc">${a.desc}</div>
+        <div class="vote-meta">⏱ ${a.dur} · 📍 ${a.region}${a.drive?' · 🚗 '+a.drive:''}</div>
+        ${exciteMeter(a.excite)}
+        <div class="vote-btns" style="margin-top:10px">
+          <button class="vb vb-y" onclick="castVote('${a.id}','y')">✅ YES!</button>
+          <button class="vb vb-m" onclick="castVote('${a.id}','m')">🤔 Maybe</button>
+          <button class="vb vb-s" onclick="castVote('${a.id}','s')">❌ Skip</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function castVote(id,v){
+  votes[id]=v;
+  const vc=document.getElementById('vc-'+id);
+  vc.querySelectorAll('.vb').forEach(b=>b.classList.remove('sel'));
+  vc.querySelector('.vb-'+v).classList.add('sel');
+  renderVoteSummary();
+}
+function renderVoteSummary(){
+  const yes=ACTS.filter(a=>votes[a.id]==='y').map(a=>'✅ '+a.name);
+  const maybe=ACTS.filter(a=>votes[a.id]==='m').map(a=>'🤔 '+a.name);
+  const skip=ACTS.filter(a=>votes[a.id]==='s').map(a=>'❌ '+a.name);
+  let h='';
+  if(yes.length)   h+=`<strong>Definite YES:</strong><br>${yes.join('<br>')}<br><br>`;
+  if(maybe.length) h+=`<strong>Maybe:</strong><br>${maybe.join('<br>')}<br><br>`;
+  if(skip.length)  h+=`<strong>Skip:</strong><br>${skip.join('<br>')}`;
+  document.getElementById('vsummary').innerHTML=h||'No votes yet — cast your votes above!';
+}
+initVotes();
+
+// ══════════════════════════════
+// MAP
+// ══════════════════════════════
+function initMap(){
+  const map=L.map('map-el');
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(map);
+  const bounds=[];
+  PINS.forEach(p=>{
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 42" width="28" height="42">
+      <path d="M14 0C6.27 0 0 6.27 0 14c0 10.5 14 28 14 28s14-17.5 14-28C28 6.27 21.73 0 14 0z" fill="${p.col}" stroke="rgba(0,0,0,.22)" stroke-width="1.2"/>
+      <text x="14" y="19" font-size="12" text-anchor="middle" fill="white">${p.ico}</text></svg>`;
+    const icon=L.divIcon({html:svg,iconSize:[28,42],iconAnchor:[14,42],popupAnchor:[0,-44],className:''});
+    const driveInfo=p.drive?`<br><span style="color:#1D9E75;font-size:11px">🚗 ${p.drive}</span>`:'';
+    L.marker([p.lat,p.lng],{icon}).addTo(map).bindPopup(`<strong style="font-size:13px">${p.name}</strong><br><span style="color:#666;font-size:11px">${p.desc}</span>${driveInfo}`);
+    bounds.push([p.lat,p.lng]);
+  });
+  map.fitBounds(bounds,{padding:[30,30]});
+}
+
+// ══════════════════════════════
+// WEATHER
+// ══════════════════════════════
+async function loadWeather(){
+  const grid=document.getElementById('wx-grid');
+  grid.innerHTML=WX_LOCS.map((l,i)=>`
+    <div class="card wx-card" id="wx-${i}">
+      <div class="wx-loc">${l.name}</div>
+      <div class="wx-date">${l.date} · ${l.sub}</div>
+      <div class="wx-spin">Fetching forecast… 🌍</div>
+    </div>`).join('');
+  for(let i=0;i<WX_LOCS.length;i++){
+    const loc=WX_LOCS[i],card=document.getElementById('wx-'+i);
+    try{
+      const url=`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lng}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode&timezone=Atlantic%2FReykjavik&start_date=${loc.date}&end_date=${loc.date}`;
+      const data=await(await fetch(url)).json();
+      const tMax=Math.round(data.daily.temperature_2m_max[0]);
+      const tMin=Math.round(data.daily.temperature_2m_min[0]);
+      const rain=data.daily.precipitation_probability_max[0];
+      const wmo=WMO[data.daily.weathercode[0]]||{i:'🌡️',d:'Unknown'};
+      const tip=tMax<3?'🧥 Very cold — heavy layers!':tMax<8?'🧤 Warm layers + waterproof':tMax<13?'😊 Mild for Iceland!':'🌈 Warm day — enjoy!';
+      card.innerHTML=`
+        <div class="wx-loc">${loc.name}</div>
+        <div class="wx-date">${new Date(loc.date+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})} · ${loc.sub}</div>
+        <div class="wx-icon">${wmo.i}</div>
+        <div class="wx-desc">${wmo.d}</div>
+        <div class="wx-temps">${tMin}° – ${tMax}°C</div>
+        <div class="wx-rain">🌧️ ${rain}% rain chance</div>
+        <div class="wx-tip">${tip}</div>`;
+    }catch(err){
+      card.innerHTML=`<div class="wx-loc">${loc.name}</div><div class="wx-date">${loc.date}</div><div class="wx-icon">❓</div><div class="wx-err">Could not load forecast<br><small>${err.message}</small></div>`;
+    }
+  }
+}
+
+// ══════════════════════════════
+// QUIZ
+// ══════════════════════════════
+let qIdx=0,qScore=0,qAnswered=false;
+function startQuiz(){ qIdx=0;qScore=0;qAnswered=false; document.getElementById('qresult').style.display='none'; showQ(); }
+function showQ(){
+  const q=QUIZ[qIdx];
+  document.getElementById('qprog').style.width=(qIdx/QUIZ.length*100)+'%';
+  document.getElementById('quiz-area').innerHTML=`
+    <div class="card quiz-card">
+      <div class="qnum">Question ${qIdx+1} of ${QUIZ.length}</div>
+      <div class="qtxt">${q.q}</div>
+      <div class="qopts">${q.opts.map((o,i)=>`<button class="qopt" id="qo-${i}" onclick="pickAns(${i})">${o}</button>`).join('')}</div>
+      <div class="qfact" id="qfact">${q.fact}</div>
+    </div>
+    <div class="quiz-nav">
+      <button class="qnext" id="qnext" onclick="nextQ()">${qIdx<QUIZ.length-1?'Next Question →':'See Results 🎉'}</button>
+    </div>`;
+  qAnswered=false;
+}
+function pickAns(idx){
+  if(qAnswered) return; qAnswered=true;
+  const ans=QUIZ[qIdx].ans;
+  document.querySelectorAll('.qopt').forEach((b,i)=>{b.disabled=true;if(i===ans)b.classList.add('correct');else if(i===idx)b.classList.add('wrong');});
+  if(idx===ans) qScore++;
+  document.getElementById('qfact').style.display='block';
+  document.getElementById('qnext').style.display='block';
+}
+function nextQ(){ qIdx++; if(qIdx>=QUIZ.length) showResult(); else showQ(); }
+function showResult(){
+  document.getElementById('quiz-area').innerHTML='';
+  document.getElementById('qprog').style.width='100%';
+  const pct=qScore/QUIZ.length;
+  let grade,txt;
+  if(pct===1)      { grade='🏆 Iceland EXPERT!';       txt="Perfect score! You're basically a Viking now. Skál! 🍺"; }
+  else if(pct>=.75){ grade='⭐ Iceland Scholar';         txt='Impressive! Eleven herself would be proud.'; }
+  else if(pct>=.5) { grade='🎒 Iceland Explorer';       txt="Not bad! You'll know everything after the actual trip."; }
+  else if(pct>=.25){ grade='🚗 Iceland Rookie';          txt="Don't worry — Háifoss will teach you everything you need."; }
+  else             { grade='👁️ Demogorgon Bait';         txt="Yikes! Good job you have Dada to protect you out there. 😂"; }
+  document.getElementById('rscore').textContent=`${qScore}/${QUIZ.length}`;
+  document.getElementById('rgrade').textContent=grade;
+  document.getElementById('rtxt').textContent=txt;
+  document.getElementById('qresult').style.display='block';
+}
+
+// ══════════════════════════════
+// FOOD GUIDE
+// ══════════════════════════════
+document.getElementById('food-yes').innerHTML=FOOD_YES.map(f=>`
+  <div class="card food-card">
+    <div class="food-icon">${f.i}</div>
+    <div class="food-name">${f.n}</div>
+    <div class="food-desc">${f.d}</div>
+    ${f.t?`<div class="food-tip">💬 "${f.t}"</div>`:''}
+  </div>`).join('');
+
+document.getElementById('food-weird').innerHTML=FOOD_WEIRD.map(f=>`
+  <div class="weird">
+    <div class="weird-ico">${f.i}</div>
+    <div>
+      <div class="weird-nm">${f.n}</div>
+      <div class="weird-dc">${f.d}</div>
+      <span class="dare-btn" onclick="this.textContent=this.textContent.includes('DARE')?'🎉 Dada, you have been dared!':'😈 DARE DADA'" style="cursor:pointer">😈 DARE DADA</span>
+    </div>
+  </div>`).join('');
+
+// ══════════════════════════════
+// FLIGHT MAP
+// ══════════════════════════════
+function initFlightMap(){
+  const fmap = L.map('flight-map-el', {zoomControl:true, scrollWheelZoom:false});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(fmap);
+
+  const lhr = [51.477, -0.461];  // London Heathrow
+  const kef = [63.985, -22.605]; // Keflavík
+
+  // Curved arc via intermediate points
+  const arcPts = [];
+  const steps = 60;
+  for(let i=0;i<=steps;i++){
+    const t = i/steps;
+    const lat = lhr[0] + (kef[0]-lhr[0])*t + Math.sin(Math.PI*t)*4;
+    const lng = lhr[1] + (kef[1]-lhr[1])*t;
+    arcPts.push([lat,lng]);
+  }
+  L.polyline(arcPts,{color:'#EF9F27',weight:2.5,dashArray:'6,5',opacity:.85}).addTo(fmap);
+
+  // Plane emoji moving along arc (midpoint)
+  const mid = arcPts[Math.floor(steps/2)];
+  L.marker(mid,{icon:L.divIcon({html:'<div style="font-size:22px;transform:rotate(-35deg)">✈️</div>',iconSize:[28,28],iconAnchor:[14,14],className:''})}).addTo(fmap);
+
+  // Airport markers
+  const mkIcon = (label,col) => L.divIcon({html:`<div style="background:${col};color:#fff;font-size:10px;font-weight:800;padding:3px 7px;border-radius:6px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.3)">${label}</div>`,iconAnchor:[20,10],className:''});
+  L.marker(lhr,{icon:mkIcon('✈ LHR London','#0a2540')}).addTo(fmap).bindPopup('<strong>London Heathrow</strong><br>Depart 9:25pm · Fri 17 Apr');
+  L.marker(kef,{icon:mkIcon('🛬 KEF Iceland','#1D9E75')}).addTo(fmap).bindPopup('<strong>Keflavík Airport</strong><br>Arrive 11:35pm · Fri 17 Apr');
+
+  fmap.fitBounds([lhr,kef],{padding:[30,40]});
+}
+initFlightMap();
+
+// ══════════════════════════════
+// PACKING LIST
+// ══════════════════════════════
+const PACK = {
+  essential:[
+    {i:'🛂',l:'Passport',s:"Check it's not expired!"},
+    {i:'💳',l:'Travel money card',s:'Mastercard/Visa works everywhere'},
+    {i:'📱',l:'Phone + charger',s:'Download offline maps too'},
+    {i:'🔌',l:'European plug adapter',s:'Iceland uses Type F (2-pin round)'},
+    {i:'🎧',l:'Headphones',s:'For the flight'},
+
+    {i:'🕶️',l:'Sunglasses',s:'15+ hours of daylight in April!'},
+    {i:'🎒',l:'Day backpack',s:'For exploring on foot'},
+  ],
+  swim:[
+    {i:'🩲',l:'Swimsuit (2x)',s:'One for the lagoon, one backup'},
+
+    {i:'🩴',l:'Flip flops / sandals',s:'For changing areas and hot tubs'},
+    {i:'🧴',l:'Conditioner',s:'Geothermal water is hard on hair'},
+    {i:'👙',l:'Towel (quick-dry)',s:'Some lagoons provide them but handy to have'},
+    {i:'💧',l:'Water bottle',s:'Stay hydrated in the hot tubs!'},
+  ],
+  fun:[
+    {i:'📷',l:'Camera or use your phone',s:"You'll want proof you were at Stranger Things falls"},
+
+    {i:'📚',l:'Book or Kindle',s:'Hotel downtime'},
+    {i:'🎵',l:'Downloaded playlist/podcast',s:'For the car drive'},
+    {i:'📓',l:'Travel journal',s:"Write about each day — you'll love it later"},
+
+  ],
+  clothes:[
+    {i:'🧥',l:'Waterproof jacket',s:'Essential — Iceland weather changes fast'},
+    {i:'🧤',l:'Warm gloves',s:'Wind chill makes it colder than it looks'},
+    {i:'🧢',l:'Warm hat / beanie',s:'Must have'},
+    {i:'🧣',l:'Scarf or buff',s:'Great for the windy lagoons'},
+    {i:'👟',l:'Waterproof boots/shoes',s:'You will get wet at waterfalls'},
+    {i:'🧦',l:'Thick socks (x3 pairs)',s:'Cold feet = miserable day'},
+    {i:'👕',l:'Thermal base layer',s:'Wear under everything'},
+    {i:'🩳',l:'Comfy clothes for evenings',s:'Hotel/restaurant'},
+  ]
+};
+
+function buildPackSection(id, items){
+  document.getElementById(id).innerHTML = items.map((it,idx)=>`
+    <div class="pack-item" id="pi-${id}-${idx}" onclick="togglePack('pi-${id}-${idx}')">
+      <div class="pack-cb" id="cb-${id}-${idx}">✓</div>
+      <div class="pack-ico">${it.i}</div>
+      <div>
+        <div class="pack-lbl">${it.l}</div>
+        ${it.s?`<div class="pack-sub">${it.s}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+function togglePack(id){
+  const el=document.getElementById(id);
+  el.classList.toggle('checked');
+}
+buildPackSection('pack-essential', PACK.essential);
+buildPackSection('pack-swim',      PACK.swim);
+buildPackSection('pack-fun',       PACK.fun);
+buildPackSection('pack-clothes',   PACK.clothes);
+
+</script>
+</body>
+</html>
